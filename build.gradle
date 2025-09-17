@@ -1,0 +1,64 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.dubbelf'
+version = '0.0.1-SNAPSHOT'
+description = 'aqualapin'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(24)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.hibernate.orm:hibernate-jcache:6.4.4.Final'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'javax.cache:cache-api:1.1.1'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.ehcache:ehcache:3.10.8'
+    implementation 'com.github.oshi:oshi-core:6.4.3'
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation 'com.stripe:stripe-java:20.88.0'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.yaml:snakeyaml:2.2'
+    implementation ('com.github.javafaker:javafaker:1.0.2') { exclude module: 'snakeyaml' }
+    compileOnly 'org.projectlombok:lombok'
+    compileOnly 'javax.websocket:javax.websocket-api:1.1'
+    compileOnly 'javax.servlet:javax.servlet-api:3.0.1'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.auth0:java-jwt:4.0.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-core'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
