@@ -1,5 +1,5 @@
 # Étape 1: Build avec Gradle
-FROM gradle:7.6.2-jdk24 AS build
+FROM gradle:8.14-jdk24 AS build
 WORKDIR /app
 COPY . .
 RUN gradle build -x test
