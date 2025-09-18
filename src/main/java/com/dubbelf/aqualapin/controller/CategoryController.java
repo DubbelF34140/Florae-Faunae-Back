@@ -15,7 +15,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/categories")
 @CrossOrigin(
-        origins = {"https://www.floraefaunae.fr","http://localhost", "https://localhost", "capacitor://localhost" },
+        origins = {"https://www.floraefaunae.fr","https://floraefaunae.fr","http://localhost", "https://localhost", "capacitor://localhost" },
         allowCredentials = "true"
 )
 @RequiredArgsConstructor

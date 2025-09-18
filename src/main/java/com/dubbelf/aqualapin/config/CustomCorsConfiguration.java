@@ -15,7 +15,7 @@ public class CustomCorsConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://www.floraefaunae.fr", "http://localhost", "https://localhost", "capacitor://localhost" ));
+        config.setAllowedOrigins(List.of("https://www.floraefaunae.fr","https://floraefaunae.fr", "http://localhost", "https://localhost", "capacitor://localhost" ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

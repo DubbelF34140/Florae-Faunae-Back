@@ -22,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/upload")
 @CrossOrigin(
-        origins = {"https://www.floraefaunae.fr","http://localhost", "https://localhost", "capacitor://localhost" },
+        origins = {"https://www.floraefaunae.fr","http://localhost","https://floraefaunae.fr", "https://localhost", "capacitor://localhost" },
         allowCredentials = "true"
 )
 public class ImageController {
