@@ -49,9 +49,15 @@ jobs:
             aws --endpoint-url ${{ secrets.MINIO_ENDPOINT }} s3 rm s3://artifacts/lapinback-latest.jar
           fi
 
+      - name: Ensure bucket exists
+        run: |
+          aws --endpoint-url ${{ secrets.MINIO_ENDPOINT }} s3 mb s3://artifacts || true
+
+
       - name: Upload JAR to MinIO
         run: |
-          aws --endpoint-url ${{ secrets.MINIO_ENDPOINT }} s3 cp build/libs/*.jar s3://artifacts/lapinback-latest.jar
+          FILE=$(ls build/libs/*.jar | head -n 1)
+          aws --endpoint-url ${{ secrets.MINIO_ENDPOINT }} s3 cp "$FILE" s3://artifacts/lapinback-latest.jar
 
   dockerize-and-push:
     name: Docker Build & Push
