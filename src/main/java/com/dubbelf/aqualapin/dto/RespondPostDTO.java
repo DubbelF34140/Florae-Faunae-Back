@@ -25,6 +25,7 @@ public class RespondPostDTO {
     private int views;
     private int likes;
     private Boolean liked;
+    private Boolean sub;
     private int comments;
 
     // Getters / Setters
@@ -84,6 +85,14 @@ public class RespondPostDTO {
 
     public void setLiked(Boolean liked) {
         this.liked = liked;
+    }
+
+    public Boolean getSub() {
+        return sub;
+    }
+
+    public void setSub(Boolean sub) {
+        this.sub = sub;
     }
 
     public int getComments() {

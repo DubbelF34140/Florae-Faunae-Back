@@ -109,14 +109,26 @@ public class UserController {
 
     }
 
+    @GetMapping("/subs")
+    public ResponseEntity<List<UserDTO>> getMySubscriptions(HttpServletRequest httpRequest) {
+        String jwtToken = JwtUtils.parseJwt(httpRequest);
+        if (jwtToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UUID currentUserId = jwtUtils.getIDFromJwtToken(jwtToken);
+        return userService.GetSubUser(currentUserId);
+    }
+
     @PostMapping("/unsub/{pseudo}")
-    public ResponseEntity<?> unsubUsersProfile(@PathVariable String pseudo, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> unsubUsersProfile(@PathVariable(value = "pseudo") String pseudo,
+                                               HttpServletRequest httpRequest) {
+        String decodedPseudo = java.net.URLDecoder.decode(pseudo, java.nio.charset.StandardCharsets.UTF_8);
         String jwtToken = parseJwt(httpRequest);
         if (jwtToken != null) {
             UUID currentUserId = jwtUtils.getIDFromJwtToken(jwtToken);
-            return userService.UnSubProfileUser(pseudo, currentUserId);
+            return userService.UnSubProfileUser(decodedPseudo, currentUserId);
         }
-        return ResponseEntity.badRequest().body("Erreur lors de l'abbonement à l'utilisateur");
-
+        return ResponseEntity.badRequest().body("Erreur lors du désabonnement à l'utilisateur");
     }
 }

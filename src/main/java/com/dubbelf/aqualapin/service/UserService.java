@@ -332,4 +332,17 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public ResponseEntity<List<UserDTO>> GetSubUser(UUID currentUserId) {
+        User currentUser = userRepository.findByIdObject(currentUserId);
+        if (currentUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<UserDTO> subs = currentUser.getSubscriptions().stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(subs);
+    }
 }

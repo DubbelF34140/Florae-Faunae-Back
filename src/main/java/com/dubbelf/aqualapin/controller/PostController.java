@@ -189,4 +189,52 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<RespondPostDTO>> searchPosts(@RequestParam String query) {
+        List<RespondPostDTO> results = postService.searchPosts(query);
+        return ResponseEntity.ok(results);
+    }
+
+
+    @GetMapping("/short/{postId}")
+    public ResponseEntity<RespondPostDTO> getNextShort(
+            @PathVariable UUID postId,
+            HttpServletRequest httpRequest
+    ) {
+        String jwtToken = parseJwt(httpRequest);
+        if (jwtToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UUID userId = jwtUtils.getIDFromJwtToken(jwtToken);
+
+        RespondPostDTO nextPost = postService.getNextShort(postId, userId);
+        if (nextPost == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        return ResponseEntity.ok(nextPost);
+    }
+
+
+    @GetMapping("/short")
+    public ResponseEntity<RespondPostDTO> getFirstShort(
+            HttpServletRequest httpRequest
+    ) {
+        String jwtToken = parseJwt(httpRequest);
+        if (jwtToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UUID userId = jwtUtils.getIDFromJwtToken(jwtToken);
+
+        RespondPostDTO nextPost = postService.getFirstShort( userId);
+        if (nextPost == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        return ResponseEntity.ok(nextPost);
+    }
+
+
 }

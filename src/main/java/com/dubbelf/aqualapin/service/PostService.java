@@ -4,10 +4,7 @@ import com.dubbelf.aqualapin.converter.RespondPostConverter;
 import com.dubbelf.aqualapin.dto.ForumStatsDTO;
 import com.dubbelf.aqualapin.dto.PostDTO;
 import com.dubbelf.aqualapin.dto.RespondPostDTO;
-import com.dubbelf.aqualapin.entity.Category;
-import com.dubbelf.aqualapin.entity.Post;
-import com.dubbelf.aqualapin.entity.Role;
-import com.dubbelf.aqualapin.entity.User;
+import com.dubbelf.aqualapin.entity.*;
 import com.dubbelf.aqualapin.repository.CategoryRepository;
 import com.dubbelf.aqualapin.repository.CommentRepository;
 import com.dubbelf.aqualapin.repository.PostRepository;
@@ -16,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -203,6 +201,83 @@ public class PostService {
         long messages = commentRepository.count();
 
         return new ForumStatsDTO(members, messages, subjects);
+    }
+
+    @Transactional
+    public List<RespondPostDTO> searchPosts(String query) {
+        if (query == null || query.isBlank()) {
+            return List.of();
+        }
+
+        String[] keywords = query.toLowerCase().split("\\s+");
+
+        Specification<Post> spec = null;
+        for (String keyword : keywords) {
+            Specification<Post> keywordSpec = PostSpecifications.containsTextInFields(keyword);
+            spec = (spec == null) ? keywordSpec : spec.and(keywordSpec);
+        }
+
+        List<Post> results = postRepository.findAll(spec);
+        return results.stream()
+                .map(RespondPostConverter::toDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    public RespondPostDTO getNextShort(UUID currentPostId, UUID userId) {
+        Post currentPost = postRepository.findById(currentPostId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 1. Récupérer les catégories likées par l’utilisateur
+        List<UUID> likedCategoryIds = postRepository.findAllLikedCategoriesByUser(user.getId());
+
+        // 2. Chercher un post recommandé (un seul résultat max)
+        List<Post> nextPosts = postRepository.findNextRecommendedPosts(
+                currentPost.getId(),
+                user.getId(),
+                likedCategoryIds,
+                PageRequest.of(0, 1)
+        );
+
+        if (nextPosts.isEmpty()) {
+            return null;
+        }
+
+        return RespondPostConverter.toDTOlike(nextPosts.get(0), user);
+    }
+
+    @Transactional
+    public RespondPostDTO getFirstShort(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 1. Récupérer les catégories likées par l’utilisateur
+        List<UUID> likedCategoryIds = postRepository.findAllLikedCategoriesByUser(user.getId());
+
+        // 2. Chercher un post recommandé sans exclure de currentPost
+        List<Post> nextPosts = postRepository.findNextRecommendedPosts(
+                UUID.randomUUID(), // valeur bidon qui ne matche rien
+                user.getId(),
+                likedCategoryIds,
+                PageRequest.of(0, 1)
+        );
+
+        Post firstPost;
+
+        if (!nextPosts.isEmpty()) {
+            firstPost = nextPosts.get(0);
+        } else {
+            // fallback : dernier post créé dans tout le forum
+            firstPost = postRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, 1))
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("No posts available"));
+        }
+
+        return RespondPostConverter.toDTOlike(firstPost, user);
     }
 
 }

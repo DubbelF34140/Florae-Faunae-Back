@@ -36,6 +36,7 @@ public class RespondPostConverter {
                 post.getViews(),
                 post.getLikes(),
                 null,
+                null,
                 post.getComments() != null ? post.getComments().size() : 0
         );
     }
@@ -53,6 +54,7 @@ public class RespondPostConverter {
                 post.getViews(),
                 post.getLikes(),
                 post.getLikedBy().contains(user),
+                post.getAuthor().getFollowers().contains(user),
                 post.getComments() != null ? post.getComments().size() : 0
         );
     }
