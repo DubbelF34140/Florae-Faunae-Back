@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(
-        origins = {"http://localhost:5173","http://localhost", "https://localhost", "capacitor://localhost" },
+        origins = {"https://www.floraefaunae.fr","http://localhost", "https://localhost", "capacitor://localhost" },
         allowCredentials = "true"
 )
 @RestController

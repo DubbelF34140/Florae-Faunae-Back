@@ -29,7 +29,7 @@ import static com.dubbelf.aqualapin.config.JwtUtils.parseJwt;
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(
-        origins = { "http://localhost:5173", "https://localhost", "capacitor://localhost" },
+        origins = { "https://www.floraefaunae.fr", "https://localhost", "capacitor://localhost" },
         allowCredentials = "true"
 )
 public class UserController {
